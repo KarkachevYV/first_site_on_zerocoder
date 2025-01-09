@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Cards</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="card-container">
+        <div class="user-card" data-name="Harry Potter" data-email="harry.potter@hogwarts.com" data-birth="31.07.1980" data-city="Godric's Hollow">
+            <img src="\garry potter.jpg" alt="Harry Potter">
+            <h2>Harry Potter</h2>
+        </div>
+        
+        <div class="user-card" data-name="Hermione Granger" data-email="hermione.granger@hogwarts.com" data-birth="19/09/1979" data-city="London">
+            <img src="\hermione.jpg" alt="Hermione Granger">
+            <h2>Hermione Granger</h2>
+        </div>
+        
+        <div class="user-card" data-name="Draco Malfoy" data-email="draco.malfoy@hogwarts.com" data-birth="05.06.1980" data-city="Wizarding Avignon">
+            <img src="\draco.jpg" alt="Draco Malfoy">
+            <h2>Draco Malfoy</h2>
+        </div>
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <img id="modalImage" src="#" alt="User Photo">
+            <div class="modal-text">
+                <h2 id="modalName"></h2>
+                <p id="modalEmail"></p>
+                <p id="modalBirth"></p>
+                <p id="modalCity"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
