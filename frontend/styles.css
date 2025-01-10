@@ -75,9 +75,15 @@ body {
   cursor: pointer;
 }
 
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
+.navbar {
+  background-color: #7a4911 !important; /* Тёмно серый цвет для панели навигации */
+}
+
+.navbar .nav-link, .navbar .navbar-brand {
+  color: rgb(240, 235, 230) !important; /* Белый цвет для текста */
+}
+
+.p-4 {
+  background-color: #53524e;
+  color: white !important;
 }
