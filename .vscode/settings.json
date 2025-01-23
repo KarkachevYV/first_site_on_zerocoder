@@ -1,0 +1,13 @@
+{
+  "sqltools.languageServerEnv": {},
+  "sqltools.useNodeRuntime": true,
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "sqlite_app",
+      "group": "app",
+      "database": "site.db"
+    }
+  ]
+}
