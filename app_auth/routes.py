@@ -2,7 +2,7 @@ from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required
 from app_auth.models import User
 from app_auth import app_auth, db, bcrypt
-from app_auth.forms import RegistrationForm, LoginForm
+from app_auth.forms import RegistrationForm, LoginForm, UpdateAccountForm
 
 
 @app_auth.route('/')
@@ -45,17 +45,21 @@ def login():
 @app_auth.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    # form = UpdateAccountForm()
-    # if form.validate_on_submit():
-    #     current_user.username = form.username.data
-    #     current_user.email = form.email.data
-    #     db.session.commit()
-    #     flash('Your account has been updated!', 'success')
-        # return redirect(url_for('account'))
-    # elif request.method == 'GET':
-    #     form.username.data = current_user.username
-    #     form.email.data = current_user.email
-    return render_template('account.html')
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        if form.password.data:
+            hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+            current_user.password = hashed_password
+        db.session.commit()
+        flash('Ваш аккаунт был обновлён!', 'success')
+        return redirect(url_for('account'))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+
+    return render_template('account.html', form=form)
 
 
 @app_auth.route('/logout')
