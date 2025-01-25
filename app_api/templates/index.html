@@ -3,29 +3,31 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1">
-   <title>{Хочешь узнать?}</title>
+   <title>Хочешь узнать?</title>
    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 
   <div class="container mt-5">
-    <h1 class="text-center mb-4">Сайт со свежими мировыми новостями и прогнозом погоды в любой точке мира.</h1>
-    
-    <form id="weatherForm" class="form-inline justify-content-center mb-4">
-        <div class="form-group mx-sm-3 mb-2">
-            <input type="text" class="form-control" name="city" placeholder="Введите город" required>
-          </div>
-          <button type="submit" class="btn btn-primary mb-2">Узнать погоду</button>
+      <h1 class="text-center mb-4">Сайт со свежими мировыми новостями и прогнозом погоды в любой точке мира.</h1>
+      <hr>
+      <div id="loadingMessage" style="display: none; text-align: center;">Перевод заголовков новостей, пожалуйста, подождите...</div>
+      <hr>
+      <form id="weatherForm" class="form-inline justify-content-center mb-4">
+          <div class="form-group mx-sm-3 mb-2">
+              <input type="text" class="form-control" name="city" placeholder="Введите город" required>
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Узнать погоду</button>
       </form>
-  
-      <div id="weatherResult" class="result text-center"></div>
       <div id="newsResult" class="result text-center"></div>
-    </div>
+      <div id="weatherResult" class="result text-center"></div>
+      
+  </div>
     
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
   <script>
-    $(document).ready(function() {
-        $('#weatherForm').submit(function(event) {
+      $(document).ready(function() {
+          $('#weatherForm').submit(function(event) {
             event.preventDefault();
             $.ajax({
                 type: 'POST',
@@ -37,21 +39,36 @@
                                               <p>Погода: ${response.weather.weather[0].description}</p>`);
                 }
             });
-        });
-  
-        $.ajax({
-            url: '/news',
-            method: 'GET',
-            success: function(response) {
-                let newsContent = '<h2>Новости:</h2><ul>';
-                response.news.forEach(article => {
-                    newsContent += `<li><a href="${article.url}"> ${article.title} </a></li>`;
-                });
-                newsContent += '</ul>';
-                $('#newsResult').html(newsContent);
-            }
-        });
-    });
+          });
+
+          function showLoadingMessage() {
+              $('#loadingMessage').show();
+          }
+          function hideLoadingMessage() {
+              $('#loadingMessage').hide();
+          }
+
+          function translateNews() {
+              showLoadingMessage();
+              $.ajax({
+                  url: '/news',
+                  method: 'GET',
+                  success: function(response) {
+                      let newsContent = '<h2>Новости:</h2><ul>';
+                      response.news.forEach(article => {
+                          newsContent += `<li><a href="${article.url}"> ${article.title} </a></li>`;
+                      });
+                      newsContent += '</ul>';
+                      $('#newsResult').html(newsContent);
+                  },
+                  complete: function() {
+                      hideLoadingMessage();
+                  }
+              });
+          }
+
+          translateNews();
+      });
   </script>
-  </body>
-  </html>
+</body>
+</html>
