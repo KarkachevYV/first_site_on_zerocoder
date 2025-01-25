@@ -1,39 +1,40 @@
-#импортируем Flask и библиотеку Request
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 import requests
+from googletrans import Translator
 
-#импортируем объект класса Flask
 app_api = Flask(__name__)
 
-#формируем путь и методы GET и POST
-@app_api.route('/', methods=['GET', 'POST'])
-#создаем функцию с переменной weather, где мы будем сохранять погоду
-def index():
-   weather = None
-   news = None
-#формируем условия для проверки метода. Форму мы пока не создавали, но нам из неё необходимо будет взять только город.   
-   if request.method == 'POST':
-       news = get_news()
-#этот определенный город мы будем брать для запроса API
-       city = request.form['city']
-       #прописываем переменную, куда будет сохраняться результат и функцию weather с указанием города, который берем из формы
-       weather = get_weather(city)
-       
-       #передаем информацию о погоде и  информацию о новорстях в index.html
-   return render_template("index.html", news=news, weather=weather)
+@app_api.route('/')
+def home():
+    return render_template("index.html")
 
-#в функции прописываем город, который мы будем вводить в форме
+@app_api.route('/weather', methods=['POST'])
+def weather():
+    city = request.form['city']
+    weather = get_weather(city)
+    translated_weather = translate_text(weather['weather'][0]['description'])
+    weather['weather'][0]['description'] = translated_weather
+    return jsonify(weather=weather)
+
+@app_api.route('/news', methods=['GET'])
+def news():
+    news = get_news()
+    translated_news = [{'title': translate_text(article['title']), 'url': article['url']} for article in news]
+    return jsonify(news=translated_news)
+
 def get_weather(city):
-   api_key = "f59d92d7531d3b3597d79873278fa83a"
-   #адрес, по которомы мы будем отправлять запрос. Не забываем указывать f строку.
-   url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
-   #для получения результата нам понадобится модуль requests
-   response = requests.get(url)
-   #прописываем формат возврата результата
-   return response.json()
+    api_key = "f59d92d7531d3b3597d79873278fa83a"
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+    response = requests.get(url)
+    return response.json()
 
 def get_news():
-   api_key = "46628fae24f5475db9de67e4fdebfceb"
-   url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}"
-   response = requests.get(url)
-   return response.json().get('articles', [])
+    api_key = "46628fae24f5475db9de67e4fdebfceb"
+    url = f"https://newsapi.org/v2/top-headlines?country=us&apiKey={api_key}"
+    response = requests.get(url)
+    return response.json().get('articles', [])
+
+def translate_text(text, lang='ru'):
+    translator = Translator()
+    translated = translator.translate(text, dest=lang)
+    return translated.text
